@@ -1,0 +1,27 @@
+{
+  "name": "pre-entraga1",
+  "version": "1.0.0",
+  "description": "App para gestion de productos y carrito de compras para e-commerce",
+  "main": "src/app.js",
+  "type": "module",
+  "scripts": {
+    "start": "node --no-warnings ./src/app.js",
+    "dev": "nodemon ./src/app.js",
+    "stop-windows": "taskkill /F /IM node.exe"
+  },
+  "author": "Pablo Bouvier",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  },
+  "dependencies": {
+    "express": "^4.21.1",
+    "express-handlebars": "^8.0.1",
+    "moment": "^2.30.1",
+    "mongodb": "^6.12.0",
+    "mongoose": "^8.8.4",
+    "mongoose-paginate-v2": "^1.8.5",
+    "multer": "^1.4.5-lts.1",
+    "socket.io": "^4.8.1"
+  }
+}

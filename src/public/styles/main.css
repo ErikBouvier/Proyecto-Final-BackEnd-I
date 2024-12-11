@@ -1,0 +1,138 @@
+* {
+    box-sizing: border-box;
+}
+
+h1 {
+    font-family: 'Courier New', Courier, monospace;
+    color: rgb(26, 17, 158);
+}
+
+h3 {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 25px;
+    color: rgb(204, 29, 29);
+    margin-left: 30px;
+}
+
+.products {
+    font-family: 'Courier New', Courier, monospace;
+    display: inline-block;
+    margin: 50px;
+    padding: 10px;
+    border: 1px solid black;
+    font-size: 18px;
+}
+
+.error404 {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.error404 img {
+    width: 400px;
+}
+
+
+form {
+    padding: 20px;
+}
+
+.status{
+    margin: 10px;
+    padding: 5px;
+    width: 50%;
+    border: 2px solid black;
+    border-radius: 5px;
+}
+
+select{
+    margin: 10px;
+    padding: 10px;
+    width: 25%;
+    border: 2px solid black;
+    border-radius: 5px;
+}
+
+input {
+    margin: 10px;
+    padding: 10px;
+    width: 50%;
+    border: 2px solid black;
+    border-radius: 5px;
+}
+
+.status {
+    margin: 10px;
+    padding: 5px;
+    width: 25%;
+    border: 2px solid black;
+    border-radius: 5px;
+}
+
+.code {
+    margin: 10px;
+    padding: 10px;
+    width: 25%;
+    border: 2px solid black;
+    border-radius: 5px;
+}
+
+input[type="number"] {
+    margin: 10px;
+    padding: 10px;
+    width: 25%;
+    border: 2px solid black;
+    border-radius: 5px;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin: 20px;
+}
+
+.btn-submit {
+    background-color: #4CAF50;
+    font-size: 15px;
+    margin: 10px;
+    padding: 10px;
+    width: 200px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: .5s ease all;
+}
+
+.btn-submit:hover{
+    background-color: #74aec9;
+}
+
+.pag-prev {
+    background-color: #61c5ac;
+    margin: 10px;
+    padding: 10px;
+    width: 150px;
+    border: 2px solid black;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: .5s ease all;
+}
+
+.pag-sig {
+    background-color: #61c5ac;
+    margin: 10px;
+    padding: 10px;
+    width: 150px;
+    border: 2px solid black;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: .5s ease all;
+}
+
+.page-number {
+    margin: 10px;
+    padding: 10px;
+}
+
+
