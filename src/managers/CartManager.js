@@ -75,6 +75,23 @@ export default class CartManager {
         }
     }
 
+    async removeProduct(cartId, productId) {
+        try {
+            const cart = await this.getById(cartId);
+            const initialLength = cart.products.length;
+            cart.products = cart.products.filter((item) => item.product._id.toString() !== productId);
+
+            if (cart.products.length === initialLength) {
+                throw new ErrorManager(`El producto con Id ${productId} no existe en el carrito`, 404);
+            }
+
+            await cart.save();
+            return cart;
+        } catch (error) {
+            throw ErrorManager.handleError(error);
+        }
+    }
+
     async deleteById(id) {
         try {
             const cart = await this.#findOneById(id);
@@ -88,21 +105,4 @@ export default class CartManager {
             throw ErrorManager.handleError(error);
         }
     }
-
-
-
-    // async deleteById(id){
-    //     try {
-    //         const cartFound = await this.#findOneById(id);
-    //         // if (cartFound.thumbnail) {
-    //         //     await deleteFile(paths.images, Found.thumbnail);
-    //         // }
-
-    //         const index = this.#carts.findIndex((item) => item.id === Number(id));
-    //         this.#carts.splice(index, 1);
-    //         await writeJsonFile(paths.files, this.#jsonFilename, this.#carts);
-    //     } catch (error) {
-    //         throw new ErrorManager(error.message, error.code);
-    //     }
-    // }
 }

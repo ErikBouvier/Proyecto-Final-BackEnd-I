@@ -42,6 +42,16 @@ router.post('/:cid/product/:pid', async (req, res) => {
     }
 });
 
+router.delete('/:cid/product/:pid', async (req, res) => {
+    try {
+        const { cid, pid } = req.params;
+        const cart = await cartManager.removeProduct(cid, pid);
+        res.status(200).json({ status: 'success', payload: cart });
+    } catch (error) {
+        res.status(error.status || 500).json({ status: 'error', message: error.message });
+    }
+});
+
 router.delete('/:pid', async (req, res) => {
     try {
         await cartManager.deleteById(req.params.pid);
