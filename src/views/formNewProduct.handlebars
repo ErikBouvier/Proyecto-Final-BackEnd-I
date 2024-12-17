@@ -1,0 +1,41 @@
+    <header>
+    <h1>Formulario para agregar productos</h1>
+</header>
+
+    <div>
+        <h3>Nuevo Producto</h3>
+        <form style="form" id="product-form">
+        
+            <input type="text" name="title" placeholder="Ingrese el nombre"><br>
+            <input type="text" name="description" placeholder="Descripción"><br>
+            <input class="code" type="text" name="code" placeholder="Ingresa el código"><br>
+            <input type="number" name="price" placeholder="Ingresa el precio"><br>
+            <div class="status">Status: <input type="checkbox" name="status"></div>
+            <input type="number" name="stock" placeholder="Ingresa el stock"><br>
+            <select name="category">
+                <option value="electronics">Informática</option>
+                <option value="fotography">Fotografía</option>
+                <option value="appliances">Electrodomésticos</option>
+                <option value="home">Hogar</option>
+                <option value="clothing">Indumentaria</option>
+                <option value="sports">Deporte</option>
+                <option value="books">Libros</option>
+                <option value="free-time">Tiempo Libre</option>
+                <option value="several">Varios</option>
+            </select><br>
+            <input class="btn-submit" type="submit" value="Guardar">
+            <div id="product-added"></div>
+        </form>
+    </div>
+
+    <div>
+        <h3 class="delete-product">Eliminar producto</h3>
+        <div>
+            <input type="string" id="product-id">
+            <button class="btn-submit" id="btn-delete-product">Eliminar</button>
+            <p id="error-message"></p>
+        </div>
+    </div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/api/public/scripts/products.socket.js"></script>

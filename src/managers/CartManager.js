@@ -1,5 +1,6 @@
 import ErrorManager from "./ErrorManager.js";
 import CartModel from "../models/cart.model.js";
+import { Types } from "mongoose";
 import { isValidId } from "../config/mongoose.config.js";
 
 
@@ -14,8 +15,7 @@ export default class CartManager {
         if (!isValidId(id)) {
             throw new ErrorManager("Id de carrito no válido", 400);
         }
-
-        const cart = await this.#cartModel.findById(id).populate('products.product');
+        const cart = await this.#cartModel.findById(id);
 
         if (!cart) {
             throw new ErrorManager("Id de carrito no encontrado", 404);
@@ -29,7 +29,6 @@ export default class CartManager {
                 limit: params?.limit || 10,
                 page: params?.page || 1,
                 populate: 'products.product',
-                lean: true,
             };
 
             return await this.#cartModel.paginate({}, paginationOptions);
@@ -41,7 +40,11 @@ export default class CartManager {
 
     async getById(id) {
         try {
-            return await this.#findOneById(id);
+            const cart = await this.#cartModel.findById(id).populate('products.product');
+            if (!cart) {
+                throw new ErrorManager("Carrito no encontrado", 404);
+            }
+            return cart;
         } catch (error) {
             throw ErrorManager.handleError(error);
         }
@@ -50,7 +53,8 @@ export default class CartManager {
     async createOne(data) {
         try {
             const cart = await this.#cartModel.create(data);
-            return cart;
+            return await this.getById(cart._id);
+
         } catch (error) {
             throw ErrorManager.handleError(error);
         }
@@ -60,18 +64,53 @@ export default class CartManager {
         try {
             const cart = await this.#findOneById(id);
             const productIndex = cart.products.findIndex((item) => item.product._id.toString() === productId)
-
+            
             if (productIndex >= 0) {
                 cart.products[productIndex].quantity++;
             } else {
                 cart.products.push({ product: productId, quantity: 1 });
             }
-
             await cart.save();
-
-            return cart;
+            return await this.getById(id);
         } catch (error) {
             throw new ErrorManager(error.message, error.code);
+        }
+    }
+
+    async updateById(id, data) {
+        try {
+            const cart = await this.getById(id);
+            data.products.forEach(newProduct => {
+                const productIndex = cart.products.findIndex((item) => item.product._id.toString() === Types.ObjectId(productIndex).toString());
+
+                if (productIndex >= 0) {
+                    cart.products[productIndex].quantity += newProduct.quantity;
+                } else {
+                    cart.products.push({ product: newProduct.product, quantity: newProduct.quantity });
+                }
+            });
+            
+            await cart.save();
+            return await this.getById(id); 
+        } catch (error) {
+            throw ErrorManager.handleError(error);
+        }
+    }
+    
+    async updateQuantity(cartId, productId, quantity) {
+        try {
+            const cart = await this.getById(cartId);
+            const productIndex = cart.products.findIndex((item) => item.product._id.toString() === productId);
+
+            if (productIndex >= 0) {
+                cart.products[productIndex].quantity = quantity;
+                await cart.save();
+                return cart;
+            } else {
+                throw new ErrorManager(`El producto con Id ${productId} no existe en el carrito`, 404);
+            }
+        } catch (error) {
+            throw ErrorManager.handleError(error);
         }
     }
 
@@ -86,7 +125,8 @@ export default class CartManager {
             }
 
             await cart.save();
-            return cart;
+            return await this.getById(id);
+
         } catch (error) {
             throw ErrorManager.handleError(error);
         }
@@ -100,7 +140,19 @@ export default class CartManager {
             }
     
             await cart.deleteOne();
-    
+                
+        } catch (error) {
+            throw ErrorManager.handleError(error);
+        }
+    }
+
+    async clearCart(cartId) {
+        try {
+            const cart = await this.getById(cartId);
+            cart.products = [];
+            await cart.save();
+            return await this.getById(id);
+
         } catch (error) {
             throw ErrorManager.handleError(error);
         }

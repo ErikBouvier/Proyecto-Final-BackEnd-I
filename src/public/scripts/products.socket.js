@@ -1,101 +1,133 @@
-const socket = io();
+const product_socket = io();
 
-const productsList = document.getElementById('products-list');    
+const productsList = document.getElementById('products-list');
 const productsForm = document.getElementById('product-form');
+const productAdded = document.getElementById('product-added');
 const errorMessage = document.getElementById('error-message');
 const productId = document.getElementById('product-id');
 const btnDelete = document.getElementById('btn-delete-product');
 const prevPageButton = document.getElementById('pag-prev');
 const nextPageButton = document.getElementById('pag-sig');
-const pageNumberSpan = document.getElementById('page-number');
+const pageNumber = document.getElementById('page-number');
+const clearCartBtn = document.getElementById('clear-cart-btn');
 
-socket.on('products-list', (data) => {
-    const products = data.products.docs || [];
+let currentPage = 1; 
 
-    productsList.innerText = '';
-
-    products.forEach(product => {
-        productsList.innerHTML += `<li>Id: ${product.id} - Nombre: ${product.title} - Categoria: ${product.category} - Price: ${product.price} </li>`;
-    });
-})
-
-productsForm.addEventListener('submit', (event) => {
-    event.preventDefault();
-    const form = event.target;
-    const formdata = new FormData(form);
-    console.log('formData',);
-    
-    errorMessage.innerText = '';
-
-    form.reset();
-
-    socket.emit('new-product', {
-        title: formdata.get('title'),
-        description: formdata.get('description'),
-        code: formdata.get('code'),
-        price: formdata.get('price'),
-        status: formdata.get('status') || 'off',
-        stock: formdata.get('stock'),
-        category: formdata.get('category'),
-    });
-});
-
-btnDelete.onclick = () => {
-    const id = Number(productId.value);
-    productId.value = '';
-    errorMessage.innerText = '';
-
-    if (id > 0){
-        socket.emit('delete-product', { id });
+const updateProductsList = (products) => {
+    if (productsList) {
+        productsList.innerHTML = '';
+        products.forEach(product => {
+            productsList.innerHTML += `<li>Id: ${product._id} - Nombre: ${product.title} - Categoría: ${product.category} - Precio: ${product.price}</li>`;
+        });
     }
-}
+};
 
-
-
-let currentPage = 1;
-const limit = 10;
-
-const fetchProducts = async (page) => {
+const fetchProducts = async (page = 1, limit = 10) => {
     try {
         const response = await fetch(`/api/products?page=${page}&limit=${limit}`);
         const data = await response.json();
 
         if (data.status === 'success') {
-            productsList.innerHTML = '';
-            data.payload.docs.forEach(product => {
-                productsList.innerHTML += `<li>Id: ${product._id} - Nombre: ${product.title} - Categoría: ${product.category} - Precio: ${product.price}</li>`;
-            });
+            updateProductsList(data.payload.docs);
 
-            prevPageButton.disabled = page <= 1;
-            nextPageButton.disabled = !data.payload.hasNextPage;
-            pageNumberSpan.textContent = `Página ${page}`;
+            if (pageNumber) {
+                pageNumber.innerText = `Página ${page}`;
+            }
+
+            if (prevPageButton) {
+                prevPageButton.disabled = page <= 1;
+            }
+
+            if (nextPageButton) {
+                nextPageButton.disabled = !data.payload.hasNextPage;
+            }
         } else {
-            console.error('Error fetching products:', data.message);
+            console.error(data.message || 'Error al obtener los productos');
         }
     } catch (error) {
-        console.error('Error fetching products:', error);
+        console.error('Error en fetchProducts:', error);
     }
 };
 
-prevPageButton.addEventListener('click', () => {
-    if (currentPage > 1) {
-        currentPage--;
+if (prevPageButton && nextPageButton) {
+    prevPageButton.addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            fetchProducts(currentPage);
+        }
+    });
+
+    nextPageButton.addEventListener('click', () => {
+        currentPage++;
         fetchProducts(currentPage);
+    });
+}
+
+if (productsForm) {
+    productsForm.onsubmit = (event) => {
+        event.preventDefault();
+        const form = event.target;
+        const formData = new FormData(form);
+        
+        errorMessage.innerText = '';
+
+        product_socket.emit('new-product', {
+            title: formData.get('title'),
+            description: formData.get('description'),
+            code: formData.get('code'),
+            price: formData.get('price'),
+            status: formData.get('status') || 'off',
+            stock: formData.get('stock'),
+            category: formData.get('category'),
+        });
+
+        form.reset();
+    };
+}
+
+if (btnDelete) {
+    btnDelete.onclick = () => {
+        const id = productId.value;
+        
+        productId.value = '';
+        errorMessage.innerText = '';
+        product_socket.emit('delete-product', { id });
+
+    };
+}
+
+product_socket.on('connect', () => {
+    if (clearCartBtn) {
+        clearCartBtn.addEventListener('click', () => {
+            const cartId = clearCartBtn.getAttribute('data-cart-id');
+            product_socket.emit('clear-cart', { cartId });
+        });
     }
 });
 
-nextPageButton.addEventListener('click', () => {
-    currentPage++;
-    fetchProducts(currentPage);
+product_socket.on('products-list', (data) => {
+    const products = data.products.docs ?? [];
+    updateProductsList(products);
+});
+
+product_socket.on('product-added', (product) => {
+    if (productAdded) {
+        productAdded.innerHTML = `
+            <h2>Artículo: ${product.title}</h2>
+            <p>Descripción: ${product.description}</p>
+            <p>Código: ${product.code}</p>
+            <p>Precio: ${product.price}</p>
+            <p>Stock: ${product.stock}</p>
+            <p>Categoría: ${product.category}</p>
+            <p>Cantidad: ${product.quantity}</p>
+        `;
+    }
+});
+
+product_socket.on('error-message', (data) => {
+    if (errorMessage) {
+        errorMessage.innerText = data.message;
+    }
 });
 
 fetchProducts(currentPage);
-
-socket.on('error-message', (data) => {
-    errorMessage.innerText = data.message;
-});
-
-
-
-
-

@@ -1,0 +1,17 @@
+<body>
+    <h1>{{title}}</h1>
+    <div>
+        <h2>{{product.title}}</h2>
+        <p>Descripcion: {{product.description}}</p>
+        <p>Precio: {{product.price}}</p>
+        <p>Categoría: {{product.category}}</p>
+        <p>Código: {{product.code}}</p>
+        <p>Estado: {{product.status}}</p>
+        <p>Stock: {{product.stock}}</p>
+        <p>Id: {{product._id}}</p>
+        <form action="/api/carts/add" method="POST">
+            <input type="hidden" name="productId" value="{{product._id}}">
+        </form>
+        <button onclick="window.location.href='/realTimeProducts'">Volver a la lista de productos</button>
+    </div>
+</body>

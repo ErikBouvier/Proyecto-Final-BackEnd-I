@@ -1,4 +1,4 @@
-import mongoose, { Schema, model } from "mongoose";
+import { Schema, model } from "mongoose";
 import paginate from "mongoose-paginate-v2";
 
 const cartSchema = new Schema({
@@ -24,6 +24,6 @@ const cartSchema = new Schema({
 
 cartSchema.plugin(paginate);
 
-const CartModel = model('carts', cartSchema);
+const CartModel = model('cart', cartSchema);
 
 export default CartModel;

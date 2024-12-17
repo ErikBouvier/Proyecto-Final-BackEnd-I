@@ -15,7 +15,7 @@ export default class ProductManager {
         if (!isValidId(id)) {
             throw new ErrorManager('Id de producto no válido', 400);
         }
-
+        
         const product = await this.#productModel.findById(id);
 
         if (!product) {
@@ -39,7 +39,6 @@ export default class ProductManager {
                 limit: params?.limit || 10,
                 page: params?.page || 1,
                 sort: sort[params?.sort] ?? {},
-                lean: true,
             };
 
             return await this.#productModel.paginate(filters, paginationOptions);
@@ -65,7 +64,7 @@ export default class ProductManager {
             
             return product;
         } catch (error){
-            throw new ErrorManager.handleError(error);
+            throw ErrorManager.handleError('error al cargar', error);
         }
     }
 

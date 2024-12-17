@@ -1,0 +1,28 @@
+<header>
+    <h1>Carrito de Compras</h1>
+    <p class="cartId">Id del Carrito: {{cartId}}</p>
+</header>
+
+<body>
+    <div class="cart-list" id="cart-list">
+        {{#if products.length}}
+            {{#each products}}
+            <div>
+                <h2>Articulo: {{this.product.title}}</h2>
+                <p>Descripción: {{this.product.description}}</p>
+                <p>Codigo: {{this.product.code}}</p>
+                <p>Precio: {{this.product.price}}</p>
+                <p>Stock: {{this.product.stock}}</p>
+                <p>Categoría: {{this.product.category}}</p>
+                <p>Cantidad: {{this.quantity}}</p>
+            </div>
+            {{/each}}
+        {{else}}
+            <p>El carrito está vacío.</p>
+        {{/if}}
+    </div>
+    <button class="btn-back-to-product" type="button" onclick="window.location.href='/realTimeProducts'">Volver a Productos</button>
+</body>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/api/public/scripts/cart.socket.js"></script>
